@@ -8,9 +8,20 @@
 # * Análises inciais de distribuição e/ou correlação com gráficos adequados
 # * Conclusões/ideias/hipóteses iniciais
 # 
-# Vamos colocando essas células de markdown no decorrer do código, aí já gera o PDF pelo próprio notebook)
+# Vamos escrevendo essas coisas em comentários no decorrer do código.
+# No .py aparece só como comentários, mas quando a gente for passar pro Jupyter dá pra colocar em células de markdown, e gerar o PDF pra entregar
+# 
+# ==============================================
 
-# In[144]:
+# # Relatório - Análise Exploratória
+# 
+# Gabriel Eugenio Brito, Renan de Souza Antunes, Aurélio Vinicius Cabral Funes
+
+# ## Descrição das fontes de dados
+# 
+# Os dados utilizados são provenientes da Polícia Rodoviária Federal, e estão disponíveis em https://www.prf.gov.br/portal/dados-abertos/acidentes. Eles consistem em uma série de arquivos csv com informações referentes a acidentes ocorridos do ano de 2007 em diante. Optamos por usar apenas os dados de 2018, mas se for  necessário podemos utilizar dados de outros anos para fazer um comparativo.
+
+# In[1]:
 
 
 import pandas as pd
@@ -18,26 +29,28 @@ import seaborn as sb
 import matplotlib.pyplot as plt
 
 
-# In[145]:
+# In[2]:
 
 
 df = pd.read_csv('acidentes2018.csv', sep=';', encoding='latin-1')
 
 
-# In[146]:
+# A princípio pensamos que cada linha do csv tivesse informações relativas a um acidente, mas após olhar com mais cuidado percebemos que existem várias linhas com o mesmo id. Na verdade cada linha representa um envolvido em um acidente.
+
+# In[3]:
 
 
 # Raw data
 pd.set_option('display.max_columns', None) # None = mostra todas
 
 print(df.columns)
-df.describe()
+df.head()
 
 
-# In[147]:
+# In[4]:
 
 
-# Descartando informações específicas dos envolvidos, porque a principio não vamos usar
+# Descarta informações específicas dos envolvidos, porque a principio não vamos usar
 
 grouped_by_accident = df.groupby('id')
 
@@ -61,13 +74,14 @@ accident_data['n_envolvidos'] = accident_data['n_ilesos'] + accident_data['n_fer
 accident_data.head()
 
 
-# In[148]:
+# In[5]:
 
 
+# Algumas estatísticas
 accident_data.describe()
 
 
-# In[160]:
+# In[6]:
 
 
 # Número de acidentes por tipo de acidente
@@ -75,7 +89,7 @@ plt.figure(figsize=(8,4))
 sb.countplot(y="tipo_acidente", data=accident_data, order=accident_data['tipo_acidente'].value_counts(ascending=True).index)
 
 
-# In[150]:
+# In[7]:
 
 
 # Número de acidentes por causa
@@ -83,7 +97,7 @@ plt.figure(figsize=(8,6))
 sb.countplot(y="causa_acidente", data=accident_data, order=accident_data['causa_acidente'].value_counts(ascending=True).index)
 
 
-# In[151]:
+# In[8]:
 
 
 # Número de acidentes por dia da semana
@@ -91,7 +105,7 @@ plt.figure(figsize=(8,4))
 sb.countplot(x="dia_semana", data=accident_data)
 
 
-# In[152]:
+# In[9]:
 
 
 # Número de acidentes por fase do dia
@@ -99,7 +113,7 @@ plt.figure(figsize=(8,4))
 sb.countplot(x="fase_dia", data=accident_data, order=['Amanhecer', 'Pleno dia', 'Anoitecer', 'Plena Noite'])
 
 
-# In[153]:
+# In[10]:
 
 
 # Número de acidentes por hora
@@ -110,7 +124,7 @@ plt.figure(figsize=(8, 4))
 sb.countplot(x='hora', data=tmp)
 
 
-# In[154]:
+# In[11]:
 
 
 # Número de acidentes no decorrer do ano (série temporal)
@@ -123,7 +137,7 @@ plt.figure(figsize=(12, 4))
 time_series = sb.lineplot(data=accident_data.groupby('data_inversa').size())
 
 
-# In[155]:
+# In[12]:
 
 
 # Acidentes por estado
@@ -131,7 +145,7 @@ plt.figure(figsize=(8,8))
 sb.countplot(y="uf", data=accident_data, order=accident_data['uf'].value_counts(ascending=True).index)
 
 
-# In[156]:
+# In[13]:
 
 
 # Acidentes por BR
@@ -139,7 +153,7 @@ plt.figure(figsize=(8,25))
 sb.countplot(y="br", data=accident_data, order=accident_data['br'].value_counts(ascending=True).index)
 
 
-# In[157]:
+# In[14]:
 
 
 # Acidentes por clima
@@ -147,7 +161,7 @@ plt.figure(figsize=(12,6))
 sb.countplot(x="condicao_metereologica", data=accident_data, order=accident_data['condicao_metereologica'].value_counts(ascending=True).index)
 
 
-# In[158]:
+# In[15]:
 
 
 # As informações dos veículos não dá pra fazer como a gente tava fazendo até agora
