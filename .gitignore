@@ -6,6 +6,8 @@
 .pynb_checkpoints/
 *.ipynb
 *.py
+*.png
+*.tex
 
 !exploratory_analysis.py
 !exploratory_analysis.ipynb
