@@ -25,7 +25,8 @@
 
 
 import pandas as pd
-import seaborn as sb
+# usa sns pro seaborn, é o padrão
+import seaborn as sns
 import matplotlib.pyplot as plt
 
 
@@ -54,6 +55,8 @@ df.head()
 
 grouped_by_accident = df.groupby('id')
 
+grouped_by_vehicle = df.groupby('id_veiculo')
+
 # Se o acidente é o mesmo, essas informações vão ser iguais pra todas as linhas daquele acidente
 accident_data = grouped_by_accident[
     'data_inversa', 'dia_semana', 'horario', 'uf', 'br', 'km', 'municipio',
@@ -63,15 +66,28 @@ accident_data = grouped_by_accident[
     'latitude', 'longitude', 'regional', 'delegacia', 'uop'
 ].first()
 
+# Se o acidente é o mesmo, essas informações vão ser iguais pra todas as linhas daquele acidente
+accident_data_by_vehicle = grouped_by_vehicle[
+    'data_inversa', 'dia_semana', 'horario', 'uf', 'br', 'km', 'municipio', 'causa_acidente',
+    'tipo_acidente', 'classificacao_acidente', 'fase_dia', 'sentido_via',
+    'condicao_metereologica', 'tipo_pista', 'tracado_via', 'uso_solo', 'tipo_veiculo',
+    'ano_fabricacao_veiculo', 'latitude', 'longitude', 'regional', 'delegacia', 'uop'
+].first()
+
 # Calcula a quantidade de feridos, mortos, etc no acidente
 accident_data['n_ilesos'] = grouped_by_accident['ilesos'].sum()
 accident_data['n_feridos_leves'] = grouped_by_accident['feridos_leves'].sum()
 accident_data['n_feridos_graves'] = grouped_by_accident['feridos_graves'].sum()
 accident_data['n_mortos'] = grouped_by_accident['mortos'].sum()
-
 accident_data['n_envolvidos'] = accident_data['n_ilesos'] + accident_data['n_feridos_leves'] + accident_data['n_feridos_graves'] + accident_data['n_mortos']
 
 accident_data.head()
+
+accident_data_by_vehicle['n_ilesos'] = grouped_by_vehicle['ilesos'].sum()
+accident_data_by_vehicle['n_feridos_leves'] = grouped_by_vehicle['feridos_leves'].sum()
+accident_data_by_vehicle['n_feridos_graves'] = grouped_by_vehicle['feridos_graves'].sum()
+accident_data_by_vehicle['n_mortos'] = grouped_by_vehicle['mortos'].sum()
+accident_data_by_vehicle['n_envolvidos'] = accident_data_by_vehicle['n_ilesos'] + accident_data_by_vehicle['n_feridos_leves'] + accident_data_by_vehicle['n_feridos_graves'] + accident_data_by_vehicle['n_mortos']
 
 
 # In[5]:
@@ -86,7 +102,7 @@ accident_data.describe()
 
 # Número de acidentes por tipo de acidente
 plt.figure(figsize=(8,4))
-sb.countplot(y="tipo_acidente", data=accident_data, order=accident_data['tipo_acidente'].value_counts(ascending=True).index)
+sns.countplot(y="tipo_acidente", data=accident_data, order=accident_data['tipo_acidente'].value_counts(ascending=True).index)
 
 
 # In[7]:
@@ -94,7 +110,7 @@ sb.countplot(y="tipo_acidente", data=accident_data, order=accident_data['tipo_ac
 
 # Número de acidentes por causa
 plt.figure(figsize=(8,6))
-sb.countplot(y="causa_acidente", data=accident_data, order=accident_data['causa_acidente'].value_counts(ascending=True).index)
+sns.countplot(y="causa_acidente", data=accident_data, order=accident_data['causa_acidente'].value_counts(ascending=True).index)
 
 
 # In[8]:
@@ -102,7 +118,7 @@ sb.countplot(y="causa_acidente", data=accident_data, order=accident_data['causa_
 
 # Número de acidentes por dia da semana
 plt.figure(figsize=(8,4))
-sb.countplot(x="dia_semana", data=accident_data)
+sns.countplot(x="dia_semana", data=accident_data)
 
 
 # In[9]:
@@ -110,7 +126,7 @@ sb.countplot(x="dia_semana", data=accident_data)
 
 # Número de acidentes por fase do dia
 plt.figure(figsize=(8,4))
-sb.countplot(x="fase_dia", data=accident_data, order=['Amanhecer', 'Pleno dia', 'Anoitecer', 'Plena Noite'])
+sns.countplot(x="fase_dia", data=accident_data, order=['Amanhecer', 'Pleno dia', 'Anoitecer', 'Plena Noite'])
 
 
 # In[10]:
@@ -121,7 +137,7 @@ tmp = pd.DataFrame()
 tmp['hora'] = pd.to_datetime(accident_data['horario']).dt.hour
 
 plt.figure(figsize=(8, 4))
-sb.countplot(x='hora', data=tmp)
+sns.countplot(x='hora', data=tmp)
 
 
 # In[11]:
@@ -134,7 +150,7 @@ accident_data['data_inversa'] = pd.to_datetime(accident_data['data_inversa'])
 accident_data.sort_values(by='data_inversa')
 
 plt.figure(figsize=(12, 4))
-time_series = sb.lineplot(data=accident_data.groupby('data_inversa').size())
+time_series = sns.lineplot(data=accident_data.groupby('data_inversa').size())
 
 
 # In[12]:
@@ -142,7 +158,7 @@ time_series = sb.lineplot(data=accident_data.groupby('data_inversa').size())
 
 # Acidentes por estado
 plt.figure(figsize=(8,8))
-sb.countplot(y="uf", data=accident_data, order=accident_data['uf'].value_counts(ascending=True).index)
+sns.countplot(y="uf", data=accident_data, order=accident_data['uf'].value_counts(ascending=True).index)
 
 
 # In[13]:
@@ -150,7 +166,7 @@ sb.countplot(y="uf", data=accident_data, order=accident_data['uf'].value_counts(
 
 # Acidentes por BR
 plt.figure(figsize=(8,25))
-sb.countplot(y="br", data=accident_data, order=accident_data['br'].value_counts(ascending=True).index)
+sns.countplot(y="br", data=accident_data, order=accident_data['br'].value_counts(ascending=True).index)
 
 
 # In[14]:
@@ -158,7 +174,7 @@ sb.countplot(y="br", data=accident_data, order=accident_data['br'].value_counts(
 
 # Acidentes por clima
 plt.figure(figsize=(12,6))
-sb.countplot(x="condicao_metereologica", data=accident_data, order=accident_data['condicao_metereologica'].value_counts(ascending=True).index)
+sns.countplot(x="condicao_metereologica", data=accident_data, order=accident_data['condicao_metereologica'].value_counts(ascending=True).index)
 
 
 # In[15]:
@@ -169,14 +185,17 @@ sb.countplot(x="condicao_metereologica", data=accident_data, order=accident_data
 # nós estamos descartando vários deles.
 # Temos que repensar essas estatísticas
 
+# id_veiculo é justamente pra isso
+
 # Acidentes por tipo de veiculo
-#pd.value_counts(accident_data['tipo_veiculo']).plot('bar')
+plt.figure(figsize=(12,8))
+sns.countplot(y="tipo_veiculo", data=accident_data_by_vehicle, order=accident_data_by_vehicle['tipo_veiculo'].value_counts().index)
 
-# mortos por ano do veículo (carros mais novos são mais seguros, será?)
 
-# absoluto
-#sns.lineplot(data=accident_data.groupby('ano_fabricacao_veiculo').agg('sum')['n_mortos'])
+# In[16]:
 
-# média
-#sns.lineplot(data=accident_data.groupby('ano_fabricacao_veiculo').agg('mean')['n_mortos'])
+# (carros mais novos são mais seguros, será?) tem muito pouco dado pra responder isso...
 
+# mortos x ilesos x feridos graves x feridos leves por ano do veículo
+plt.figure(figsize=(12,8))
+sns.lineplot(data=accident_data_by_vehicle[['ano_fabricacao_veiculo', 'n_mortos', 'n_ilesos', 'n_feridos_graves', 'n_feridos_leves']].groupby('ano_fabricacao_veiculo').agg('sum'))
