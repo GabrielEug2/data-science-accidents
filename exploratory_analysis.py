@@ -188,3 +188,48 @@ sns.scatterplot(x="longitude", y="latitude", data=accident_data)
 plt.figure(figsize=(8,12))
 sns.countplot(y='tipo_acidente', hue='tipo_pista', data=accident_data, order=accident_data['tipo_acidente'].value_counts(ascending=True).index)
 
+# In[20]
+
+# Pegando apenas os condutores
+condutores = df[df['tipo_envolvido'] == 'Condutor'][['id', 'pesid', 'tipo_envolvido', 'idade', 'sexo']]
+
+# Verificando unicidade das tuplas
+print(condutores.groupby(['id', 'pesid']).size().sort_values(ascending=False).head())
+
+# In[21]
+
+# Analise do genero dos condutores (ignorando os ignorados lulz)
+genero_condutores = (condutores[condutores['sexo'] != 'Ignorado']).groupby('sexo').size()
+genero_condutores = pd.DataFrame({'genero':genero_condutores.index, 'acidentes':genero_condutores.values})
+
+sns.barplot('genero', 'acidentes', data=genero_condutores.sort_values('genero', ascending=False)).set(xlabel='Genero', ylabel='Acidentes')
+
+# In[22]
+
+# Analise da idade dos condutores (entre 10 e 100 anos, pois fora desse intervalo me parece erro da base)
+idade_condutores = (condutores[(condutores['idade'] > 10) & (condutores['idade'] < 100)]).groupby('idade').size()
+idade_condutores = pd.DataFrame({'idade':idade_condutores.index, 'acidentes':idade_condutores.values})
+
+sns.barplot('idade', 'acidentes', data=idade_condutores)
+
+# In[23]
+
+# Analise da condicao metereologica com o tipo da pista
+pista_condicao = accident_data[accident_data['condicao_metereologica'] != 'Ignorado'][['condicao_metereologica', 'tipo_pista']]
+pista_condicao = pista_condicao.groupby(['condicao_metereologica', 'tipo_pista']).size()
+pista_condicao = pd.DataFrame(pista_condicao).reset_index()
+pista_condicao.rename(columns={0:'acidentes'}, inplace=True)
+
+sns.barplot(y='condicao_metereologica', x='acidentes', data=pista_condicao, hue='tipo_pista')
+
+# In[24]
+
+causa_acidente = accident_data.groupby('causa_acidente').size()
+causa_acidente = pd.DataFrame(causa_acidente).reset_index()
+causa_acidente.rename(columns={0:'acidentes'}, inplace=True)
+causa_acidente['causa_acidente_cat'] = causa_acidente['causa_acidente'].astype('category') 
+
+# In[25]
+
+accident_data['causa_acidente_cat'] = accident_data['causa_acidente'].astype('category')
+accident_data.corr(method='spearman')
