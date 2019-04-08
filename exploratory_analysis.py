@@ -104,7 +104,7 @@ plt.figure(figsize=(8,4))
 sns.countplot(
     y="tipo_acidente",
     data=accident_data,
-    order=accident_data['tipo_acidente'].value_counts(ascending=True).index
+    order=accident_data['tipo_acidente'].value_counts().index
 )
 
 # In[]:
@@ -114,7 +114,7 @@ plt.figure(figsize=(8,6))
 sns.countplot(
     y="causa_acidente",
     data=accident_data,
-    order=accident_data['causa_acidente'].value_counts(ascending=True).index
+    order=accident_data['causa_acidente'].value_counts().index
 )
 
 # In[]:
@@ -124,7 +124,7 @@ plt.figure(figsize=(8,8))
 sns.countplot(
     x="uf",
     data=accident_data,
-    order=accident_data['uf'].value_counts(ascending=True).index
+    order=accident_data['uf'].value_counts().index
 )
 
 # In[]:
@@ -134,7 +134,7 @@ plt.figure(figsize=(8,25))
 sns.countplot(
     y="br",
     data=accident_data,
-    order=accident_data['br'].value_counts(ascending=True).index
+    order=accident_data['br'].value_counts().index
 )
 
 # In[]:
@@ -182,7 +182,7 @@ plt.figure(figsize=(12,6))
 sns.countplot(
     x="condicao_metereologica",
     data=accident_data,
-    order=accident_data['condicao_metereologica'].value_counts(ascending=True).index
+    order=accident_data['condicao_metereologica'].value_counts().index
 )
 
 # In[]
@@ -242,7 +242,7 @@ plt.figure(figsize=(12,8))
 sns.countplot(
     y="tipo_veiculo",
     data=vehicle_data,
-    order=vehicle_data['tipo_veiculo'].value_counts(ascending=True).index
+    order=vehicle_data['tipo_veiculo'].value_counts().index
 )
 
 # Já era de se esperar que automóveis são os que mais estão envolvidos
