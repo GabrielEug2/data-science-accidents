@@ -291,3 +291,8 @@ sns.countplot(x='sexo', data=drivers_data)
 plt.figure(figsize=(12,6))
 plot = sns.distplot(drivers_data['idade'])
 plot.set(xticks=range(0, 100, 5))
+
+# In[]
+
+sns.violinplot(x='sexo', y='idade', data=drivers_data)
+plt.savefig('violin_condutores.png', dpi=100, transparant=True)
