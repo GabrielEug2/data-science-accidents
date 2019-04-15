@@ -4,10 +4,5 @@
 
 # Pra cada um poder ter o que quiser na sua pasta e não dar push sem querer
 .pynb_checkpoints/
-*.ipynb
-*.py
 *.png
 *.tex
-
-!exploratory_analysis.py
-!exploratory_analysis.ipynb
