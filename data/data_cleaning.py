@@ -2,10 +2,10 @@ import pandas as pd
 import numpy as np
 
 
-# data_2017 = pd.read_csv("datatran2017.csv", sep=";", encoding="latin-1")
-# data_2018 = pd.read_csv("datatran2018.csv", sep=";", encoding="latin-1")
+data_2017 = pd.read_csv("datatran2017.csv", sep=";", encoding="latin-1")
+data_2018 = pd.read_csv("datatran2018.csv", sep=";", encoding="latin-1")
 
-# full_data = pd.concat([data_2017, data_2018])
+full_data = pd.concat([data_2017, data_2018])
 # full_data.to_csv("full.csv", index=False)
 
 # final = pd.read_csv("final.csv")
@@ -24,6 +24,13 @@ def clean_data(df):
 
     # troca células vazias por NaN
     df.replace("", np.nan, inplace=True)
+
+    df['latitude'] = df['latitude'].apply(lambda x: round(x, 4))
+    df['longitude'] = df['longitude'].apply(lambda x: round(x, 4))
+    df.drop(df[df['latitude'] >= 6 ].index, inplace=True)
+    df.drop(df[df['latitude'] <= -34 ].index, inplace=True)
+    df.drop(df[df['longitude'] <= -74 ].index, inplace=True)
+    df.drop(df[df['longitude'] >= -35 ].index, inplace=True)
 
     # remove qualquer linha com NaN
     df.dropna(inplace=True)
@@ -51,5 +58,12 @@ def clean_data(df):
 
     df.to_csv("final.csv", index=False)
 
+def lat_lon():
+    final = pd.read_csv("final.csv")
 
-# clean_data(full_data)
+    df = final[["id", "latitude", "longitude"]]
+
+    df.to_csv("latlon.csv", index=False)
+
+clean_data(full_data)
+lat_lon()

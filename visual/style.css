@@ -1,0 +1,22 @@
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: #333;
+}
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.map {
+    width: 100vw;
+    height: 100vh;
+}
+.state {
+    fill: white;
+}
+.accident {
+    fill: aqua;
+}
