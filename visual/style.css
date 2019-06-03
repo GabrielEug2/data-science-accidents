@@ -17,6 +17,9 @@ body {
 .state {
     fill: white;
 }
-.accident {
-    fill: aqua;
+.fatal {
+    fill: red;
+}
+.not {
+    fill: grey;
 }

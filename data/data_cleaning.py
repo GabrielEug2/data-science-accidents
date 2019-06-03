@@ -37,8 +37,8 @@ def clean_data(df):
 
     # cria coluna timestamp com data + hora
     df["timestamp"] = pd.to_datetime(df["data_inversa"] + " " + df["horario"])
-    df.drop(columns=["data_inversa"], inplace=True)
-    df.drop(columns=["horario"], inplace=True)
+    # df.drop(columns=["data_inversa"], inplace=True)
+    # df.drop(columns=["horario"], inplace=True)
 
     # reordena as colunas, colocando timestamp na segunda posição
     cols = df.columns.tolist()
@@ -61,9 +61,12 @@ def clean_data(df):
 def lat_lon():
     final = pd.read_csv("final.csv")
 
-    df = final[["id", "latitude", "longitude"]]
+    df = final[["data_inversa", "id", "latitude", "longitude", "fase_dia", "condicao_metereologica", "mortos"]]
+    df.loc[df['mortos'] > 0, 'mortos'] = True
+    df.loc[df['mortos'] <= 0, 'mortos'] = False
+    df['mortos'] = np.where(df['mortos'] > 0, 1, 0)
 
     df.to_csv("latlon.csv", index=False)
 
-clean_data(full_data)
+clean_data(data_2018)
 lat_lon()
