@@ -7,9 +7,16 @@
 </head>
 <body>
     <div class="container">
-        <button onclick="run();">Run</button>
+        <div class="controls">
+            <button onclick="run();">Run</button>
+            <button onclick="pause();">Pause</button>
+            <button onclick="reset();">Reset</button>
+            <button onclick="heat();">Heatmap</button>
+        </div>
+        <div class="map"></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.2/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simpleheat@0.4.0/simpleheat.min.js"></script>
     <script src="main.js"></script>
 </body>
 </html>

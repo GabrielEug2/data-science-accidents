@@ -1,18 +1,37 @@
 body {
     margin: 0;
     padding: 0;
-    min-height: 100vh;
-    background: #333;
+    height: 100%;
+    width: 100%;
+    background: #222;
+}
+button {
+    margin: 0 1em;
+    padding: .5em;
 }
 .container {
+    margin-top: 50px;
+    display: flex;
+    justify-content: start;
+    flex-flow: column;
+}
+.controls {
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
 }
 .map {
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+svg {
+    position: absolute;
+}
+#heatmap {
+    position: absolute;
+
 }
 .state {
     fill: white;
@@ -21,5 +40,5 @@ body {
     fill: red;
 }
 .not {
-    fill: grey;
+    fill: #aaa;
 }
