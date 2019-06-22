@@ -1,9 +1,10 @@
-const url = "https://servicodados.ibge.gov.br/api/v2/malhas/?resolucao=2&formato=application/vnd.geo+json";
+// Salvo no arquivo geo.json
+// const brazil_geojson_url = "https://servicodados.ibge.gov.br/api/v2/malhas/?resolucao=2&formato=application/vnd.geo+json";
 
 let accidents;
 let days;
 
-d3.csv("latlon.csv").then(function(data) {
+d3.csv("../data/visualizations_data.csv").then(function(data) {
     accidents = data;
     days = Array.from(new Set(accidents.map(a => a.data_inversa)));
 });
@@ -17,48 +18,53 @@ const svg = d3.select("div.map")
     .attr("width", width)
     .attr("height", height);
 
-const canvasLayer = d3.select("div.map").append('canvas').attr('id', 'heatmap').attr('width', width).attr('height', height);
+const canvasLayer = d3.select("div.map")
+    .append('canvas')
+    .attr('id', 'heatmap')
+    .attr('width', width)
+    .attr('height', height);
 
 const projection = d3.geoMercator().scale(1000).translate([1000, 100]).center([-20, 2]);
 const path = d3.geoPath().projection(projection);
 
-const json = d3.json("geo.json").then(
-    function (data) {
-        svg.selectAll("path")
-            .data(data.features)
-            .enter()
-            .append("path")
-            .attr("class", "state")
-            .attr("d", path);
-    }
-);
+const json = d3.json("geo.json").then(function (data) {
+    svg.selectAll("path")
+        .data(data.features)
+        .enter()
+        .append("path")
+        .attr("class", "state")
+        .attr("d", path);
+});
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function run() {
-    const current = running + 1;
-    reset();
+    running = true
 
     for (let day of days) {
-        svg
-        .append("g")
-        .selectAll("circle")
-        .data(accidents.filter(e => e.data_inversa === day))
-        .enter()
-        .append("circle")
-        .attr("class", function(d) {return d.mortos === "1" ? "fatal" : "not"})
-        .attr("cx", function(d) {return projection([d.longitude, d.latitude])[0];})
-        .attr("cy", function(d) {return projection([d.longitude, d.latitude])[1];})
-        .attr("r", "1px");
-
-        svg.select("text").remove();
-        svg.append("text").attr("x",50).attr("y",700).text(day).attr("fill","white");
-
-        if (current !== running) {
+        if (!running) {
             return;
         }
+
+        svg.append("g")
+            .selectAll("circle")
+            .data(accidents.filter(e => e.data_inversa === day))
+            .enter()
+            .append("circle")
+            .attr("class", function(d) {return d.mortos === "1" ? "fatal" : "not-fatal"})
+            .attr("cx", function(d) {return projection([d.longitude, d.latitude])[0];})
+            .attr("cy", function(d) {return projection([d.longitude, d.latitude])[1];})
+            .attr("r", "1px");
+
+        svg.select("text").remove();
+        svg.append("text")
+            .attr("x",50)
+            .attr("y",700)
+            .text(day)
+            .attr("fill","white");
+
         await sleep(10);
     }
 }
@@ -81,17 +87,18 @@ function heat() {
   svg.insert("g", "g")
     .selectAll("path")
     .data(densityData)
-    .enter().append("path")
+    .enter()
+    .append("path")
     .style("opacity", 0.2)
     .attr("d", d3.geoPath())
     .attr("fill", function(d) { return color(d.value); })
 }
 
 function reset() {
-    running += 1;
+    running = false;
     svg.selectAll("circle,text").remove();
 }
 
 function pause() {
-    running += 1;
+    running = false;
 }

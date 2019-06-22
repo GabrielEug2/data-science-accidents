@@ -39,6 +39,6 @@ svg {
 .fatal {
     fill: red;
 }
-.not {
+.not-fatal {
     fill: #aaa;
 }
