@@ -3,7 +3,7 @@
 *.csv
 
 # Pra cada um poder ter o que quiser na sua pasta e não dar push sem querer
-.pynb_checkpoints/
+.ipynb_checkpoints/
 *.png
 *.tex
 

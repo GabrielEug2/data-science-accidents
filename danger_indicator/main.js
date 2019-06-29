@@ -57,7 +57,6 @@ d3.json("geo.json").then(function(data) {
 
 function updateMap() {
     let selectedBr = null;
-
     let brSelect = document.getElementById("br_select");
     if (brSelect.selectedIndex > 0) {
         selectedBr = brSelect.options[brSelect.selectedIndex].value;
