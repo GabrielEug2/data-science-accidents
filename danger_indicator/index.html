@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Brazillian Roads Accidents Visualizations</title>
+    <link rel="stylesheet" type="text/css" href="style.css" >
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <select id="br_select" onclick="updateMap()">
+                <option selected value="">Selecione uma BR</option>
+            </select>
+            <select id="weather_select" onclick="updateMap()">
+                <option selected value="">Selecione um clima</option>
+            </select>
+        </div>
+        <div class="map"></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.2/d3.min.js"></script>
+    <script src="lib/geojson.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simpleheat@0.4.0/simpleheat.min.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

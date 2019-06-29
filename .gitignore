@@ -6,3 +6,5 @@
 .pynb_checkpoints/
 *.png
 *.tex
+
+.vscode/

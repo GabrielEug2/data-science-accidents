@@ -11,7 +11,7 @@ d3.csv("../data/visualizations_data.csv").then(function(data) {
 
 const width = 800;
 const height = 800;
-let running = 0;
+let running = false;
 
 const svg = d3.select("div.map")
     .append("svg")
@@ -41,7 +41,7 @@ function sleep(ms) {
 }
 
 async function run() {
-    running = true
+    running = true;
 
     for (let day of days) {
         if (!running) {

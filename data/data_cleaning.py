@@ -8,6 +8,7 @@ full_data = pd.concat([data_2017, data_2018])
 
 CLEAN_DATA_FILENAME = "final.csv"
 VISUALIZATIONS_DATA_FILENAME = "visualizations_data.csv"
+DANGER_INDICATOR_ACCIDENTS_FILENAME = "only_brs_with_most_accidents.csv"
 
 
 def clean_data(df):
@@ -56,6 +57,7 @@ def preprocess_data_for_visualizations():
     df = pd.read_csv(CLEAN_DATA_FILENAME)
 
     df = df[["data_inversa", "id", "latitude", "longitude", "fase_dia", "condicao_metereologica", "mortos"]]
+
     df.loc[df['mortos'] > 0, 'mortos'] = True
     df.loc[df['mortos'] <= 0, 'mortos'] = False
     df['mortos'] = np.where(df['mortos'] == True, 1, 0)
@@ -63,5 +65,27 @@ def preprocess_data_for_visualizations():
     df.to_csv(VISUALIZATIONS_DATA_FILENAME, index=False)
 
 
+def preprocess_data_for_danger_indicator():
+    df = pd.read_csv(CLEAN_DATA_FILENAME)
+
+    df = df[['id', 'br', 'km', 'latitude', 'longitude', 'horario', 'condicao_metereologica', 'mortos']]
+
+    # Deixa só as BRs com mais dados
+    # print(df.groupby('br').size().sort_values(ascending=False))
+    brs_with_most_accidents = [101, 116, 381, 40]
+    df = df[df['br'].isin(brs_with_most_accidents)]
+
+    # print(df.groupby('condicao_metereologica').size().sort_values(ascending=False))
+    df = df[df['condicao_metereologica'] != 'Ignorado']
+
+    # Número de mortos também não interessa, só se teve ou não
+    df.loc[df['mortos'] > 0, 'mortos'] = True
+    df.loc[df['mortos'] <= 0, 'mortos'] = False
+    df['mortos'] = np.where(df['mortos'] == True, 1, 0)
+
+    df.to_csv(DANGER_INDICATOR_ACCIDENTS_FILENAME, index=False)
+
+
 clean_data(data_2018)
 preprocess_data_for_visualizations()
+preprocess_data_for_danger_indicator()
