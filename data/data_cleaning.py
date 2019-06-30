@@ -72,7 +72,7 @@ def preprocess_data_for_danger_indicator():
 
     # Deixa só as BRs com mais dados
     # print(df.groupby('br').size().sort_values(ascending=False))
-    brs_with_most_accidents = [101, 116, 381, 40]
+    brs_with_most_accidents = df.groupby('br').size().sort_values(ascending=False).head(10).index
     df = df[df['br'].isin(brs_with_most_accidents)]
 
     # print(df.groupby('condicao_metereologica').size().sort_values(ascending=False))
