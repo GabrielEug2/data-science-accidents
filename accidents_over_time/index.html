@@ -1,22 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Brazillian Roads Accidents Visualizations</title>
-    <link rel="stylesheet" type="text/css" href="style.css" >
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
+
 <body>
     <div class="container">
-        <div class="controls">
-            <button onclick="run();">Run</button>
-            <button onclick="pause();">Pause</button>
-            <button onclick="reset();">Reset</button>
-            <button onclick="heat();">Heatmap</button>
+        <div class="header">
+            <div class="controls">
+                <button onclick="run();">Run</button>
+                <button onclick="pause();">Pause</button>
+                <button onclick="reset();">Reset</button>
+                <button onclick="heat();">Heatmap</button>
+            </div>
         </div>
         <div class="map"></div>
+        <div class="info" id="info">
+            <table>
+                <tr>
+                    <td class="info-text">
+                        Estado
+                    </td>
+                    <td id="state">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="info-text">
+                        Total
+                    </td>
+                    <td id="total">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="info-text">
+                        Ranking
+                    </td>
+                    <td id="ranking">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="info-text">
+                        Cidade 
+                    </td>
+                    <td id="city">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="info-text">
+                        Total da Cidade
+                    </td>
+                    <td id="city-total">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="info-text">
+                        Rodovia
+                    </td>
+                    <td id="br">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="info-text">
+                        Total da Rodovia
+                    </td>
+                    <td id="br-total">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="info-text">
+                        Tipo
+                    </td>
+                    <td id="type">
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.2/d3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/simpleheat@0.4.0/simpleheat.min.js"></script>
+    <script src="https://d3js.org/topojson.v1.min.js"></script>
     <script src="main.js"></script>
 </body>
+
 </html>

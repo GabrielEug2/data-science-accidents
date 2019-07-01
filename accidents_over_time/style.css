@@ -42,3 +42,22 @@ svg {
 .not-fatal {
     fill: #aaa;
 }
+.info {
+    position: relative;
+    top: 400px;
+    left: -325px;
+    visibility: hidden;
+    color: #fff;
+    border: 1px solid #fff;
+    border-radius: 8px;
+    width: 25em;
+    margin: 0 auto;
+}
+table {
+    table-layout: auto;
+    width: 100%;
+}
+td {
+    padding: .5rem;
+    text-align: left;
+}

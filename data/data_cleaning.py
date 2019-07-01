@@ -1,3 +1,4 @@
+import json
 import pandas as pd
 import numpy as np
 
@@ -56,11 +57,11 @@ def clean_data(df):
 def preprocess_data_for_visualizations():
     df = pd.read_csv(CLEAN_DATA_FILENAME)
 
-    df = df[["data_inversa", "id", "latitude", "longitude", "fase_dia", "condicao_metereologica", "mortos"]]
+    df = df[["data_inversa", "id", "latitude", "longitude", "fase_dia", "condicao_metereologica", "mortos", "uf"]]
 
-    df.loc[df['mortos'] > 0, 'mortos'] = True
-    df.loc[df['mortos'] <= 0, 'mortos'] = False
-    df['mortos'] = np.where(df['mortos'] == True, 1, 0)
+    df.loc[df['mortos'] > 0, 'mortos'] = 1
+    df.loc[df['mortos'] <= 0, 'mortos'] = 0
+    # df['mortos'] = np.where(df['mortos'] == True, 1, 0)
 
     df.to_csv(VISUALIZATIONS_DATA_FILENAME, index=False)
 
@@ -70,7 +71,7 @@ def preprocess_data_for_danger_indicator():
 
     df = df[['id', 'br', 'km', 'latitude', 'longitude', 'horario', 'condicao_metereologica', 'mortos']]
 
-    # Deixa só as BRs com mais dados
+    # Deixa só as brs com mais dados
     # print(df.groupby('br').size().sort_values(ascending=False))
     brs_with_most_accidents = df.groupby('br').size().sort_values(ascending=False).head(10).index
     df = df[df['br'].isin(brs_with_most_accidents)]
@@ -79,13 +80,77 @@ def preprocess_data_for_danger_indicator():
     df = df[df['condicao_metereologica'] != 'Ignorado']
 
     # Número de mortos também não interessa, só se teve ou não
-    df.loc[df['mortos'] > 0, 'mortos'] = True
-    df.loc[df['mortos'] <= 0, 'mortos'] = False
-    df['mortos'] = np.where(df['mortos'] == True, 1, 0)
+    df.loc[df['mortos'] > 0, 'mortos'] = 1
+    df.loc[df['mortos'] <= 0, 'mortos'] = 0
+    # df['mortos'] = np.where(df['mortos'] == True, 1, 0)
 
     df.to_csv(DANGER_INDICATOR_ACCIDENTS_FILENAME, index=False)
 
 
-clean_data(data_2018)
-preprocess_data_for_visualizations()
-preprocess_data_for_danger_indicator()
+def create_state_json(data):
+    df = pd.DataFrame(columns=['uf', 'total', 'rank', 'top_city', 'city_total', 'top_br', 'br_total', 'top_cause'])
+
+    total = pd.DataFrame({'total' : data.groupby(['uf']).size()}).reset_index()
+    total['rank'] = total['total'].rank(ascending=0, method='max').astype(int)
+    
+    df[['uf', 'total']] = total[['uf', 'total']]
+    df[['uf', 'rank']] = total[['uf', 'rank']]
+    df[['uf', 'top_city', 'city_total']] = pd.DataFrame({'total': data[['uf', 'municipio']].groupby(['uf', 'municipio']).size().sort_values().groupby(level=0).tail(1)}).sort_values(by=['uf']).reset_index()[['uf', 'municipio', 'total']]
+    df[['uf', 'top_br', 'br_total']] = pd.DataFrame({'total': data[['uf', 'br']].groupby(['uf', 'br']).size().sort_values().groupby(level=0).tail(1)}).sort_values(by=['uf']).reset_index()[['uf', 'br', 'total']]
+    # df[['uf', 'top_type']] = pd.DataFrame({'total': data[['uf', 'tipo_acidente']].groupby(['uf', 'tipo_acidente']).size().sort_values().groupby(level=0).tail(1)}).sort_values(by=['uf']).reset_index()[['uf', 'tipo_acidente']]
+    df[['uf', 'top_cause']] = pd.DataFrame({'total': data[['uf', 'causa_acidente']].groupby(['uf', 'causa_acidente']).size().sort_values().groupby(level=0).tail(1)}).sort_values(by=['uf']).reset_index()[['uf', 'causa_acidente']]
+
+    df.set_index('uf', inplace=True)
+
+    with open('states.json', 'w', encoding='utf-8') as outfile:
+        json.dump(json.loads(df.to_json(orient='index')), outfile, ensure_ascii=False)
+
+
+def sortkey(x):
+    values = x.split('/')
+    return [int(values[0]), int(values[1])]
+
+def create_race_data(data):
+    data["timestamp"] = pd.to_datetime(data["data_inversa"] + " " + data["horario"])
+    data['month_year'] = data['timestamp'].apply(lambda x: str(x.month) + "/" + str(x.year))
+    state_period = pd.DataFrame({'total': data[['uf', 'month_year']].groupby(['uf', 'month_year']).size()}).reset_index()[['uf', 'month_year', 'total']]
+    
+    states = sorted(set(state_period['uf']))
+    # months = sorted(set(state_period['month_year']), sortkey)
+    months = sorted(set(state_period['month_year']), key = lambda x: pd.to_datetime(x, infer_datetime_format=True))
+    print(months)
+    
+    rows = []
+    for state in states:
+        row = []
+        row.append(state)
+        if state in ['SC', 'PR', 'RS']:
+            row.append('Sul')
+        elif state in ['SP', 'RJ', 'MG', 'ES']:
+            row.append('Sudeste')
+        elif state in ['AC', 'AM', 'AP', 'PA', 'RO', 'RR', 'TO']:
+            row.append('Norte')
+        elif state in ['GO', 'MT', 'MS', 'DF']:
+            row.append('Centro-Oeste')
+        elif state in ['AL', 'BA', 'CE', 'MA', 'PB', 'PE', 'PI', 'RN', 'SE']:
+            row.append('Nordeste')
+        count = 0
+        for month in months:
+            temp = state_period[(state_period['uf'] == state) & (state_period['month_year'] == month)]
+            count += int(temp['total'])
+            row.append(count)
+        rows.append(row)
+
+    months = list(map(lambda x: str(x).zfill(7), months))
+    
+    df = pd.DataFrame(rows)
+    df.columns = ['uf', 'region'] + months
+    print(df)
+    df.to_csv('race.csv', index=False)
+
+
+# clean_data(data_2018)
+# preprocess_data_for_visualizations()
+# preprocess_data_for_danger_indicator()
+# create_state_json(data_2018)
+create_race_data(full_data)
